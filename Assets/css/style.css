@@ -1,0 +1,32 @@
+header {
+    display: flex;
+    justify-content: space-between;
+    padding-right: 5px;
+    padding-left: 5px;
+    border: 1px dashed #000000;
+}
+
+h1 {
+    font-size: 16pt;
+}
+
+a {
+    text-decoration: none;
+    color: black;
+}
+ 
+a:hover {
+    text-decoration: underline;
+}
+
+main {
+    width: 35%;
+    margin: 0 auto;
+    border: 0px solid black;
+}
+
+#answerResult {
+    margin-top: 15px;
+    padding-top: 5px;
+    border-top: 3px solid black;
+}
