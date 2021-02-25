@@ -29,4 +29,30 @@ main {
     margin-top: 15px;
     padding-top: 5px;
     border-top: 3px solid black;
+    
+}
+
+button {
+    margin-top: 15px;
+}
+
+ul {
+    list-style: none;
+    margin: 0px;
+
+}
+
+li {
+    font-weight: bold;
+    font-size: 14pt;
+    padding: 5px;
+    margin-left: -20px;
+    border: 1px solid black;
+    background-color: blueviolet;
+    margin-top: 3px;
+    margin-bottom: 3px;
+}
+
+li:hover {
+    background-color: violet;
 }
