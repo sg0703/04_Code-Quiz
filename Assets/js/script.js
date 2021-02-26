@@ -1,20 +1,20 @@
-// Homework for Web API's 
+// Homework for Web API's - Code Quiz
 // Started 2-23-21
 
-// randomize answer choices
+/**************** to do: take out inline css, put it in stylesheet, use Id's. see if some repetitive code can be placed in functions...look for variables that are not used 
+ * a few buttons are in content div, put them in button div 
+*/
 
+/************* Global variables **********/
 
-/**********SET GLOBAL VARIABLES ***********/
-// get header container, put in variable for readability
+// get elements in template HTML to build off of
 var contentHeader = document.getElementById("content_header");
-// get content container, put in variable for readability
 var content = document.getElementById("content");
 var buttonDiv = document.getElementById("button");
-
-// get answerResult div, put in variable 
 var answerResult = document.getElementById("answerResult");
 var timerDisplay = document.getElementById("timer");
 
+// set variables to regulate gameplay across functions
 var qNumber;
 var gameClock;
 var gameTimer;
@@ -48,18 +48,18 @@ var questionsAnswers = [
     }
 ];
 
-/*************DISPLAY INITIAL CONTENT ****************/
+/************* Display initial content for page ***********/
+
 displayStart();
 
-/*************FUNCTIONS BELOW CONTROL GAMEPLAY*************/
+/************* Functions ************* */
 
-// function to display initial content.
+// display welcome page 
 function displayStart() {
     gameClock = 75;
     qNumber = 0;
-    clearInterval(gameTimer);
 
-    // display start page
+    // insert content onto page
     contentHeader.innerHTML = "Coding Quiz Challenge";
     content.innerHTML = "Try to answer the following code-related questions within the time limit. Keep in mind that incorrect answers will penalize your score/times by ten seconds!";
     timerDisplay.innerHTML = gameClock;
@@ -69,14 +69,14 @@ function displayStart() {
     startButton.innerHTML = "Start the quiz!";
     buttonDiv.appendChild(startButton);
   
-    // If start button is pressed, start the game and hide the button
+    // start game when start button clicked
     startButton.addEventListener("click",function() {
         // start clock
         startClock();
         // display questions
         displayQuestions(questionsAnswers);
-        // make button disappear
-        startButton.setAttribute("style","display:none");
+        // remove button
+        startButton.remove();
     });
 
     // if user wants to see high scores, display that page
@@ -84,7 +84,7 @@ function displayStart() {
     highscoreLink.addEventListener("click",displayScores);
 }
 
-// function to start game clock
+// start game clock
 function startClock() {
     // set timer using global variable x, so I can access from gameOver()
     gameTimer = setInterval(function() {
@@ -101,7 +101,7 @@ function startClock() {
     },1000);
 }
 
-// function to display questions, accepts questionsAnswers array
+// display questions, accepts questionsAnswers array so that different question/answer banks can be used
 function displayQuestions(questionsAnswers) {
     // dump current question into var for readability/my sanity
     var currentQ = questionsAnswers[qNumber];
@@ -128,7 +128,7 @@ function displayQuestions(questionsAnswers) {
         content.appendChild(list);
         list.appendChild(listItem);
 
-        // add event listener to each list item...log clock and act accordingly
+        // if list item is clicked, check answer and display message correct vs. wrong at bottom
         document.getElementById("list#"+i).addEventListener("click",function() {
             if (this.getAttribute("data-correct") === "true") {
                 // display right/wrong message in hidden div, make visible
@@ -155,6 +155,7 @@ function displayQuestions(questionsAnswers) {
     }
 }
 
+// handle end of game page/highscore input
 function gameOver() {
     timerDisplay.innerHTML = gameClock;
     clearInterval(gameTimer);
@@ -168,7 +169,7 @@ function gameOver() {
     nameBox.setAttribute("type","text");
     nameBox.setAttribute("style","margin-top: 15px;");
     nameBox.addEventListener("focus",function() {
-        answerResult.setAttribute("style","display:none;");
+        answerResult.remove();
         nameBox.setAttribute("style","background: lightgray;");
     });
     content.appendChild(nameBox);
@@ -193,6 +194,7 @@ function gameOver() {
     });
 }
 
+// add username and score to localstorage
 function addScore(name,score) {
     // create object for new score that was passed to function
     newScore =
@@ -219,7 +221,7 @@ function addScore(name,score) {
     }
 }
 
-// function to display high scores
+// display high scores
 function displayScores() {
     contentHeader.innerHTML = "Here are the high scores: ";
     content.innerHTML = ""; // reset innerHTML
