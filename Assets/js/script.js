@@ -2,7 +2,7 @@
 // Started 2-23-21
 
 /**************** to do: take out inline css, put it in stylesheet, use Id's. see if some repetitive code can be placed in functions...look for variables that are not used 
- * a few buttons are in content div, put them in button div 
+ * a few buttons are in content div, put them in button div, do readme
 */
 
 /************* Global variables **********/
@@ -136,11 +136,14 @@ function displayQuestions(questionsAnswers) {
                 answerResult.innerHTML = "Correct!";
             }
             else {
-                // subtract 10 seconds
-                gameClock -= 10;
                 // display right/wrong message in hidden div, make visible
                 answerResult.setAttribute("style","display:all");
                 answerResult.innerHTML = "Incorrect!";
+                // prevent a negative gameClock
+                if (gameClock >= 11) {
+                    // subtract 10 seconds
+                    gameClock -= 10;
+                }
             }
 
             // end game if on the last question
@@ -171,6 +174,9 @@ function gameOver() {
     nameBox.addEventListener("focus",function() {
         answerResult.remove();
         nameBox.setAttribute("style","background: lightgray;");
+    });
+    nameBox.addEventListener("blur",function() {
+        nameBox.setAttribute("style","background: white;");
     });
     content.appendChild(nameBox);
 
@@ -223,10 +229,15 @@ function addScore(name,score) {
 
 // display high scores
 function displayScores() {
+    // stop countdown if called by clicking link during gameplay
+    clearInterval(gameTimer);
+    timerDisplay.innerHTML = "75";
+
+    // reset page contents
     contentHeader.innerHTML = "Here are the high scores: ";
     content.innerHTML = ""; // reset innerHTML
     buttonDiv.innerHTML = "";
-
+    
     // default message if no scores in localstorage
     if (!localStorage.getItem("codeQuizScores")) {
         content.innerHTML = "No scores yet! Play the game!";
