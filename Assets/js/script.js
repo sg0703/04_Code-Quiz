@@ -1,7 +1,8 @@
 // Homework for Web API's 
 // Started 2-23-21
 
-// to do: go back and delete redundant display buttons code, remove from HTML...write entire page with JS
+// randomize answer choices
+
 
 /**********SET GLOBAL VARIABLES ***********/
 // get header container, put in variable for readability
@@ -16,7 +17,7 @@ var timerDisplay = document.getElementById("timer");
 
 var qNumber;
 var gameClock;
-let gameTimer;
+var gameTimer;
 
 // Store questions in an array of objects
 var questionsAnswers = [
@@ -27,17 +28,17 @@ var questionsAnswers = [
     },
     {
         question: 'Arrays in Javascript can be used to store:',
-        answers: ['numbers and strings','other arrays','booleans','all of the above'],
+        answers: ['Numbers and strings','Other arrays','Booleans','All of the above'],
         correct: 3
     },
     {
         question: 'String values must be enclosed within ______ when being assigned to variables.',
-        answers: ['commas','curly brackets','quotes','parenthesis'],
+        answers: ['Commas','Curly brackets','Quotes','Parenthesis'],
         correct: 2
     },
     {
         question: 'A very useful tool used during development and debugging for printing content to the debugger is:',
-        answers: ['JavaScript','terminal/bash','for loops','console.log'],
+        answers: ['JavaScript','Terminal/bash','For loops','Console.log'],
         correct: 3
     }, 
     {
@@ -64,7 +65,6 @@ function displayStart() {
     timerDisplay.innerHTML = gameClock;
 
     // create start button
-    var buttonDiv = document.getElementById("button");
     var startButton = document.createElement("button");
     startButton.innerHTML = "Start the quiz!";
     buttonDiv.appendChild(startButton);
@@ -78,13 +78,16 @@ function displayStart() {
         // make button disappear
         startButton.setAttribute("style","display:none");
     });
+
+    // if user wants to see high scores, display that page
+    var highscoreLink = document.getElementById("highscore_link");
+    highscoreLink.addEventListener("click",displayScores);
 }
 
 // function to start game clock
 function startClock() {
     // set timer using global variable x, so I can access from gameOver()
     gameTimer = setInterval(function() {
-        console.log("In start clock, gameClock is "+gameClock);
         gameClock--;
         // end game if it times out, otherwise continue to play
         if (gameClock === 0) {
@@ -104,8 +107,9 @@ function displayQuestions(questionsAnswers) {
     var currentQ = questionsAnswers[qNumber];
     var list = document.createElement("ul");
 
+    // reset content box, then build list of answers
     contentHeader.innerHTML = currentQ.question;
-    content.innerHTML = '';// reset content box, then build list of answers
+    content.innerHTML = '';
 
     for (i = 0; i < currentQ.answers.length; i++) {
         var listItem = document.createElement("li");
@@ -132,19 +136,19 @@ function displayQuestions(questionsAnswers) {
                 answerResult.innerHTML = "Correct!";
             }
             else {
+                // subtract 10 seconds
                 gameClock -= 10;
-                 // display right/wrong message in hidden div, make visible
+                // display right/wrong message in hidden div, make visible
                 answerResult.setAttribute("style","display:all");
                 answerResult.innerHTML = "Incorrect!";
             }
 
+            // end game if on the last question
             if (qNumber < (questionsAnswers.length - 1)) { 
                 qNumber++;
                 return displayQuestions(questionsAnswers);
             }
             else {
-                console.log("GAME OVER!");
-                console.log(gameClock + " is your score!");
                 gameOver();
             }
         });
@@ -219,50 +223,55 @@ function addScore(name,score) {
 function displayScores() {
     contentHeader.innerHTML = "Here are the high scores: ";
     content.innerHTML = ""; // reset innerHTML
+    buttonDiv.innerHTML = "";
 
+    // default message if no scores in localstorage
     if (!localStorage.getItem("codeQuizScores")) {
         content.innerHTML = "No scores yet! Play the game!";
     }
+    // otherwise, pull scores from localstorage and display them in list
     else {
         // use same variable name as in addScore for readability
         var oldScoreArray = JSON.parse(localStorage.getItem("codeQuizScores"));
 
-        var scoreList = document.createElement("ul");
-        
+        // sort scores from highest to lowest
+        oldScoreArray.sort(function(a,b) {
+            return b.score - a.score;
+        });
+
         // get all of the old scores, display in list
+        var scoreList = document.createElement("ul");
         for (i = 0; i < oldScoreArray.length; i++) {
             var scoreItem = document.createElement("li");
-            scoreItem.innerHTML = (i+1) + ". " + oldScoreArray[i].name + ": " + oldScoreArray[i].score;
+            scoreItem.innerHTML = (i+1) + ". " + oldScoreArray[i].name + " - " + oldScoreArray[i].score;
             scoreItem.setAttribute("id","score"+i);
             scoreList.appendChild(scoreItem);
             content.appendChild(scoreList);
         }
     }
-       // display buttons to clear scores or go back to start of quiz
+    // display buttons to clear scores or go back to start of quiz
+    var goBackBtn = document.createElement("button");
+    goBackBtn.innerHTML = "Go back";
+    goBackBtn.setAttribute("style","margin-right: 5px;");
+    button.appendChild(goBackBtn);
 
-       var goBackBtn = document.createElement("button");
-       goBackBtn.innerHTML = "Go back";
-       goBackBtn.setAttribute("style","margin-right: 5px;");
-       button.appendChild(goBackBtn);
+    var clearScoresBtn = document.createElement("button");
+    clearScoresBtn.innerHTML = "Clear High Scores";
+    button.appendChild(clearScoresBtn);
 
-       var clearScoresBtn = document.createElement("button");
-       clearScoresBtn.innerHTML = "Clear High Scores";
-       button.appendChild(clearScoresBtn);
+    // add event listeners to these buttons, handle accordingly
+    var qNumber = 0;
+    var gameClock = 75;  
 
-       // add event listeners to these buttons, handle accordingly
-       var qNumber = 0;
-       var gameClock = 75;  
-       console.log("THIS SHOULD BE 75" + gameClock);
+    goBackBtn.addEventListener("click", function() { 
+        // reload the page, starting over
+        location.reload();
+    });
 
-       goBackBtn.addEventListener("click", function() { 
-           // reload the page, starting over
-           location.reload();
-       });
-
-       clearScoresBtn.addEventListener("click", function() {
-           localStorage.removeItem("codeQuizScores");
-           contentHeader.innerHTML = "Here are the high scores: ";
-           content.innerHTML = "Cleared high scores. Now go play again!";
-           return displayScores;
-       });
+    clearScoresBtn.addEventListener("click", function() {
+        localStorage.removeItem("codeQuizScores");
+        contentHeader.innerHTML = "Here are the high scores: ";
+        content.innerHTML = "Cleared high scores. Now go play again!";
+        return displayScores;
+    });
 }
