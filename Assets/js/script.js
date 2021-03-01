@@ -1,10 +1,6 @@
 // Homework for Web API's - Code Quiz
 // Started 2-23-21
 
-/**************** to do: take out inline css, put it in stylesheet, use Id's. see if some repetitive code can be placed in functions...look for variables that are not used 
- * a few buttons are in content div, put them in button div, do readme
-*/
-
 /************* Global variables **********/
 
 // get elements in template HTML to build off of
